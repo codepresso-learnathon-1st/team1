@@ -16,7 +16,7 @@ rag = embedder.get_vectorstore()
 def repo_to_rag(repo_url: str):
     # 1. 리포지토리 클론
     # repo_path = f"./repo_data/{uuid.uuid4()}"
-    repo_path = "/tmp/repo_data/{uuid.uuid4()}" # 읽기 전용 디렉토리 이슈 해결 코드
+    repo_path = f"/tmp/repo_data/{uuid.uuid4()}" # 읽기 전용 디렉토리 이슈 해결 코드
     repo = clone_repo_url(repo_url, repo_path)
     if repo is None:
         raise RuntimeError(f"Failed to clone repository: returned None :: ❌ 클론 실패: {repo_url}")
