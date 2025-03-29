@@ -2,13 +2,9 @@
 import sys
 import os
 from langchain_core.documents import Document
-from typing import List
+from typing import List, Dict, Any 
 
-from agent.agent1 import repo_to_rag
-from modules.rag import DocumentEmbedder
-
-
-from agent.agent1 import repo_to_rag
+from agent.agent1 import repository_clone
 from modules.rag import DocumentEmbedder
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -40,6 +36,31 @@ mcp = FastMCP(
     version="0.0.1",
     description="-"
 )
+
+
+def format_repo_context(repo_info: Dict[str, Any]) -> str:
+    """
+    Format repository analysis as markdown.
+
+    Args:
+        analysis: Dictionary containing repository analysis
+    """
+    markdown_result = f"""
+    ## 저장소 분석 결과
+
+    ### 기본 정보
+    - **저장소 URL**: {repo_info['repository_url']}
+    - **총 파일 수**: {repo_info['summary']['total_files']}
+    - **총 청크 수**: {repo_info['summary']['document_chunks']}
+
+    ### 저장소 구조
+    - **디렉토리 수**: {len(repo_info['structure']['directories'])}
+    - **사용 언어**: {', '.join(repo_info['structure']['languages'])}
+
+    ### README 내용
+    {repo_info['readme']}
+    """
+    return markdown_result
 
 
 def format_search_results(docs: List[Document]) -> str:
@@ -84,7 +105,8 @@ async def repo_to_rag(repo_url: str) -> str:
     """
 
     try:
-        return repo_to_rag(repo_url)
+        repo_info = await repository_clone(repo_url)
+        return format_repo_context(repo_info)
     except Exception as e:
         return f"An error occurred while processing the repository: {str(e)}"
 
