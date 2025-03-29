@@ -57,7 +57,7 @@ async def agent1(repo_url: str) -> str:
         return f"An error occurred while processing the repository: {str(e)}"
 
 @mcp.tool()
-async def agent2(query: str) -> str:
+async def agent2(query: str, top_k: int = 5) -> str:
     """
     Embedding Search ⇒ Generate Answer
     Receives a question, performs embedding-based similarity search, and generates a response
@@ -65,17 +65,23 @@ async def agent2(query: str) -> str:
 
     Parameters:
         query: The user's input question
+        top_k: Number of top documents to retrieve
     """
 
     try:
-        bm25_retriever = BM25Retriever.from_documents(split_docs, k=top_k)
-        dense_retriever = db.as_retriever(search_kwargs={"k": top_k})
-        retriever = EnsembleRetriever(
-            retrievers=[bm25_retriever, dense_retriever],
-            weights=[0.5, 0.5]
-        )
-        retriever.get_relevant_documents(query)
-        return "agnet2 check"
+        # bm25_retriever = BM25Retriever.from_documents(split_docs, k=top_k)
+        # dense_retriever = db.as_retriever(search_kwargs={"k": top_k})
+        # retriever = EnsembleRetriever(
+        #     retrievers=[bm25_retriever, dense_retriever],
+        #     weights=[0.5, 0.5]
+        # )
+        # return retriever.get_relevant_documents(query)
+        # return "agnet2 check"
+        dense_retriever = rag.as_retriever(search_kwargs={"k": top_k})
+        results = dense_retriever.get_relevant_documents(query)
+
+        # 결과를 문자열로 변환해서 리턴
+        return "\n\n".join([doc.page_content for doc in results])
     except Exception as e:
         return f"An error occurred while generating the response: {str(e)}"
 
