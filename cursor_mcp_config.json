@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "team1-learnathon-mcp": {
+      "url": "http://localhost:8000/sse"
+    }
+  }
+}
