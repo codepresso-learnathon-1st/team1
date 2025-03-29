@@ -5,6 +5,7 @@ from langchain_chroma import Chroma
 from langchain_core.documents import Document
 import logging
 from dotenv import load_dotenv
+from chromadb.config import Settings
 
 # 로깅 설정
 logging.basicConfig(
@@ -34,9 +35,7 @@ class DocumentEmbedder:
         )
         
         self.vectorstore = Chroma(
-            # persist_directory=persist_directory,
-            # persist_directory="./db/chroma",  # 쓰기 가능한 경로로 변경
-            persist_directory=None,
+            persist_directory=persist_directory,
             embedding_function=self.embeddings,
             collection_name=collection_name
         )
